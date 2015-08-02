@@ -1,0 +1,37 @@
+{
+    "port": 1338,
+    "security": {
+        "tokenLife" : 3600000
+    },
+    "mongoose": {
+        "uri": "mongodb://localhost/apiDB"
+    },
+    "social": {
+        "weibo": {
+            "clientId":"2250432332",
+            "clientSecret":"5de392ba0d145bfb02e98aa55dec4926",
+            "callbackURL":"http://172.52.6.40:1337/auth/weibo/callback"
+        }
+    },
+    "default": {
+        "api": {
+            "version" : "v1"
+        },
+        "user": {
+            "username": "heha",
+            "password": "heha",
+            "social": {
+            "weibo": {
+                "platform": "weibo",
+                "uid": 1947261240,
+                "picture": "http://tp1.sinaimg.cn/1947261240/50/5732080843/1"
+            }
+        }
+        },
+        "client": {
+            "name": "Android API v1",
+            "clientId": "android",
+            "clientSecret": "SomeRandomCharsAndNumbers"
+        }
+    }
+}
