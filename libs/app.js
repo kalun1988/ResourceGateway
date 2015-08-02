@@ -17,28 +17,7 @@ var httpProxy = require('http-proxy');
 var apiProxy = new httpProxy.createProxyServer();
 var app = express();
 
-// app.use('/', api);
-// app.use('/api', api);
-//API PROXY
-app.get('/api/v1/members',function(req, res, next) {
-  passport.authenticate('bearer', function(err, user, info) {
-    if(!user){
-        res.json({
-            error:"invalid token"
-        });
-        return;
-    }
-    if(!user.error){
-        next();
-    }else{
-        res.json({
-            error:user.error
-        });
-    }
-  })(req, res, next);
-}, function (req, res, next) { 
-  apiProxy.web(req, res, { target: 'http://localhost:3000' });
-});
+
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -50,6 +29,34 @@ app.use(session({ secret: 'ilovescotchscotchyscotchscotch' })); // session secre
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
+
+// app.use('/', api);
+// app.use('/api', api);
+//API PROXY
+var checkAuth=function(req, res, next) {
+  passport.authenticate('bearer', function(err, user, info) {
+    if(!user){
+        res.json({
+            error:"invalid token"
+        });
+        return;
+    }
+    if(!user.error){
+        req.query.uid=user.id;
+        next();
+    }else{
+        res.json({
+            error:user.error
+        });
+    }
+  })(req, res, next);
+}
+app.get('/api/v1/members',checkAuth, function (req, res, next) { 
+  apiProxy.web(req, res, { target: 'http://localhost:3000' });
+});
+app.get('/api/v1/me',checkAuth, function (req, res, next) { 
+    res.redirect('http://localhost:3000/api/v1/members?_id='+req.query.uid);
+});
 
 module.exports = app;
 
